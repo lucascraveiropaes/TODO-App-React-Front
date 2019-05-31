@@ -2,7 +2,7 @@ import React                from "react";
 import ReactDOM             from "react-dom";
 import * as serviceWorker   from "./serviceWorker";
 import { Home }             from "./pages";
-import "./styles/styles.css";
+import "./styles/styles.scss";
 
 // Redux
 import { Provider }         from "react-redux";
