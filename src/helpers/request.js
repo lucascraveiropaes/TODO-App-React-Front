@@ -21,7 +21,7 @@ const request = function(options) {
         return false;
     }
 
-    return client(options).then(onSuccess).catch(options.onError);
+    return client(options).then(onSuccess).catch(onError);
 }
 
 export default request;

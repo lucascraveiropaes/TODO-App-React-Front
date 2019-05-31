@@ -60,6 +60,7 @@ html, body {
             font-weight: 500;
             font-size: 1.5rem;
             padding-bottom: 8px;
+            word-break: break-word;
         }
 
         textarea {
@@ -71,6 +72,10 @@ html, body {
             border-radius: 6px;
         }
     }
+}
+
+.css-tpnslk, .css-17eabvo {
+    display: none !important;
 }
 
 .card-add-new {

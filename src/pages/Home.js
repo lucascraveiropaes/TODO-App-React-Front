@@ -1,29 +1,37 @@
 import React, { Component }     from "react";
+import { connect }              from 'react-redux';
 import { Card, NewTodoCard }    from "../components/";
 import request                  from "../helpers/request";
+import { fetchTodos }           from "../actions/todos";
 
 class Home extends Component {
     constructor(props) {
         super(props);
+    }
 
-        this.state = {
-            todos: [{
-                id: 1,
-                title: "Teste",
-                description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                backgroundColor: "#286e38"
-            }]
-        }
+    failToast = () => {
+        this.props.toastManager.add("Não foi possível atualizar sua lista de tarefas. Você está trabalhando offline.", {
+            appearance: "error",
+            placement: "bottom-right"
+        });
+    }
+
+    componentWillReceiveNewProps(nextProps) {
+        console.log( nextProps, false );
+        this.setState({ add: false })
     }
 
     componentDidMount() {
+        const { toastManager } = this.props;
+
         request("/todos", {
             method: "GET"
         }).then((data) => {
-            console.log(data);
-        }).catch((err) => {
-            console.log(err);
-        })
+            if (data !== false) {
+                this.props.fetchTodos(data.todos);
+                toastManager.add("Dados atualizados com sucesso!", { appearance: "success" });
+            } else this.failToast();
+        }).catch((err) => this.failToast());
     }
 
     renderTodo = (todo, index) => (
@@ -38,14 +46,14 @@ class Home extends Component {
     )
 
     render() {
-        const { todos } = this.state;
+        const { todos } = this.props;
 
         return (
             <div className="app-container">
                 <div className="container-fluid">
                     <div className="row">
                         { todos.map(this.renderTodo) }
-                        <NewTodoCard/>
+                        <NewTodoCard key={ new Date().getTime() }/>
                     </div>
                 </div>
             </div>
@@ -53,4 +61,8 @@ class Home extends Component {
     }
 }
 
-export default Home
+const mapStateToProps = (state, props) => ({
+    todos: state.todos.todos
+})
+
+export default connect(mapStateToProps, { fetchTodos })(Home);

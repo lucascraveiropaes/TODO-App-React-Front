@@ -9,10 +9,16 @@ import { Provider }         from "react-redux";
 import { PersistGate }      from "redux-persist/lib/integration/react";
 import { persistor, store } from "./store/store.js";
 
+// Toasts
+import { ToastProvider, withToastManager } from 'react-toast-notifications';
+const AplicationToastWrapped = withToastManager(Home);
+
 const routing = (
-    <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-            <Home/>
+    <Provider store={ store }>
+        <PersistGate loading={ null } persistor={ persistor }>
+            <ToastProvider transitionDuration={ 800 }>
+                <AplicationToastWrapped/>
+            </ToastProvider>
         </PersistGate>
     </Provider>
 )

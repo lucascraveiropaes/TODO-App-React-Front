@@ -1,6 +1,9 @@
-import React, { Component } from "react";
-import Button               from "./Button";
-import { inverseColor }     from "../helpers/utils";
+import React, { Component }     from "react";
+import { connect }              from 'react-redux';
+import { withToastManager }     from 'react-toast-notifications';
+import Button                   from "./Button";
+import { inverseColor }         from "../helpers/utils";
+import { newTodo, updateTodo }  from "../actions/todos";
 
 const date = new Date();
 
@@ -16,9 +19,24 @@ class Card extends Component {
         }
     }
 
+    callback = (status, message) => {
+        this.props.toastManager.add(message, {
+            appearance: status ? "success" : "error"
+        });
+    }
+
     saveContent = (e) => {
+        const { title, description, backgroundColor } = this.state;
+        const { id, newTodo, updateTodo, toastManager } = this.props;
+
         e.preventDefault();
-        this.setState({ isSaved: true })
+        this.setState({ isSaved: true });
+
+        if (id === 0) {
+            newTodo({ title, description, backgroundColor, id }, this.callback);
+        } else {
+            updateTodo({ title, description, backgroundColor, id }, this.callback);
+        }
     };
 
     updateTitle = (e) => this.setState({ title: e.target.value, isSaved: false })
@@ -37,7 +55,7 @@ class Card extends Component {
                 )}
                 <div className="card-input-group">
                     <input style={{ color: color }} type="text" name={ date.getTime() } value={ title } onChange={ this.updateTitle } placeholder="Insira um título aqui..."/>
-                    <textarea style={{ color: color }} rows="5" name={ date.getTime() } value={ description } onChange={ this.updateDescription } placeholder="Aqui você escreve mais detalhes sobre a tarefa..."/>
+                    <textarea style={{ color: color }} name={ date.getTime() } value={ description } onChange={ this.updateDescription } placeholder="Aqui você escreve mais detalhes sobre a tarefa..."/>
                 </div>
             </form>
         )
@@ -51,4 +69,8 @@ Card.defaultProps = {
     backgroundColor: "#FFF"
 };
 
-export default Card
+const mapStateToProps = (state, props) => ({
+    todos: state.todos.todos
+})
+
+export default connect(mapStateToProps, { newTodo, updateTodo })( withToastManager(Card) );
