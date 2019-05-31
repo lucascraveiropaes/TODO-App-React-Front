@@ -3,7 +3,7 @@ import { connect }              from 'react-redux';
 import { withToastManager }     from 'react-toast-notifications';
 import Button                   from "./Button";
 import { inverseColor }         from "../helpers/utils";
-import { newTodo, updateTodo }  from "../actions/todos";
+import { newTodo, updateTodo, deleteTodo }  from "../actions/todos";
 
 const date = new Date();
 
@@ -40,7 +40,13 @@ class Card extends Component {
     };
 
     updateTitle = (e) => this.setState({ title: e.target.value, isSaved: false })
-    updateDescription = (e) => this.setState({ description: e.target.value, isSaved: false })
+    updateDescription = (e) => this.setState({ description: e.target.value, isSaved: false });
+
+    deleteTodo = () => {
+        if (window.confirm("Deseja deletar essa tarefa?")) {
+            this.props.deleteTodo(this.props.id, this.callback);
+        }
+    }
 
     render() {
         const { isSaved, title, description, backgroundColor } = this.state;
@@ -48,9 +54,13 @@ class Card extends Component {
 
         return (
             <form className="card" autoComplete="false" style={{ backgroundColor: backgroundColor }} onSubmit={ this.saveContent }>
-                {(!isSaved) && (
+                {(!isSaved) ? (
                     <Button onClick={ this.saveContent } className="absolute-icon">
                         <i style={{ color: color }} className="material-icons">save</i>
+                    </Button>
+                ) : (
+                    <Button onClick={ this.deleteTodo } className="absolute-icon">
+                        <i style={{ color: color }} className="material-icons">delete</i>
                     </Button>
                 )}
                 <div className="card-input-group">
@@ -73,4 +83,4 @@ const mapStateToProps = (state, props) => ({
     todos: state.todos.todos
 })
 
-export default connect(mapStateToProps, { newTodo, updateTodo })( withToastManager(Card) );
+export default connect(mapStateToProps, { newTodo, updateTodo, deleteTodo })( withToastManager(Card) );

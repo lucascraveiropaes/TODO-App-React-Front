@@ -51,10 +51,24 @@ export function updateTodo(todo, callback) {
     }
 }
 
-export const deleteTodo = (id) => ({
-    type: "DELETE_TODO",
-    id: id
-});
+export function deleteTodo(id, callback = () => null) {
+    return (dispatch) => {
+        request({
+            url: "/todos/delete/" + id,
+            method: "DELETE"
+        }).then((data) => {
+            if (data !== false) {
+                dispatch({ type: "DELETE_TODO", id: id });
+                callback(data.status, data.message);
+            } else {
+                callback(false, "Não foi possível deletar a tarefa no momento");
+            }
+        }).catch((err) => {
+            callback(false, "Não foi possível deletar a tarefa no momento");
+            console.log(err);
+        });
+    }
+}
 
 export const clearTodos = () => ({
     type: "CLEAR"
